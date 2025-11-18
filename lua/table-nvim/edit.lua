@@ -5,9 +5,11 @@ local utils = require('table-nvim.utils')
 local MdTable = require('table-nvim.md_table')
 local C = require('table-nvim.constants')
 
+local M = {}
+
 ---Add a new column to the table.
 ---@param left boolean If `true` the column is added to the left of current column, and to the right otherwise.
-local insert_column = function(left)
+local function insert_column(left)
   local root = utils.get_tbl_root(ts.get_node());
   if not root then return end
 
@@ -18,12 +20,13 @@ local insert_column = function(left)
   t:render()
 end
 
-local insert_column_left = function() insert_column(true) end
-local insert_column_right = function() insert_column(false) end
+function M.insert_column_left() insert_column(true) end
+
+function M.insert_column_right() insert_column(false) end
 
 ---Insert a new column to the table.
 ---@param up boolean If `true` the row is insert above current row, and below otherwise.
-local insert_row = function(up)
+local function insert_row(up)
   local root = utils.get_tbl_root(ts.get_node());
   if not root then return end
 
@@ -34,22 +37,23 @@ local insert_row = function(up)
   t:render_row(index)
 end
 
-local insert_row_up = function() insert_row(true) end
-local insert_row_down = function() insert_row(false) end
+function M.insert_row_up() insert_row(true) end
 
-local insert_table = function()
+function M.insert_row_down() insert_row(false) end
+
+function M.insert_table()
   local row = api.nvim_win_get_cursor(0)[1] - 1
   local lines = utils.gen_table()
   api.nvim_buf_set_lines(0, row, row + 1, true, lines)
 end
 
-local insert_table_alt = function()
+function M.insert_table_alt()
   local row = api.nvim_win_get_cursor(0)[1] - 1
   local lines = utils.gen_table_alt()
   api.nvim_buf_set_lines(0, row, row + 1, true, lines)
 end
 
-local delete_current_column = function()
+function M.delete_current_column()
   local root = utils.get_tbl_root(ts.get_node());
   if not root then return end
 
@@ -58,7 +62,7 @@ local delete_current_column = function()
   t:render()
 end
 
-local move_column = function(left)
+local function move_column(left)
   local root = utils.get_tbl_root(ts.get_node());
   if not root then return end
 
@@ -74,10 +78,11 @@ local move_column = function(left)
   t:move_cursor_to(t.cursor_row, second)
 end
 
-local move_column_left = function() move_column(true) end
-local move_column_right = function() move_column(false) end
+function M.move_column_left() move_column(true) end
 
-local move_row = function(up)
+function M.move_column_right() move_column(false) end
+
+local function move_row(up)
   local root = utils.get_tbl_root(ts.get_node());
   if not root then return end
 
@@ -110,24 +115,8 @@ local move_row = function(up)
   api.nvim_win_set_cursor(0, { second_row + 1, cursor[2] })
 end
 
-local move_row_up = function() move_row(true) end
-local move_row_down = function() move_row(false) end
+function M.move_row_up() move_row(true) end
 
-return {
-  insert_row_up = insert_row_up,
-  insert_row_down = insert_row_down,
+function M.move_row_down() move_row(false) end
 
-  move_row_up = move_row_up,
-  move_row_down = move_row_down,
-
-  insert_column_left = insert_column_left,
-  insert_column_right = insert_column_right,
-
-  move_column_left = move_column_left,
-  move_column_right = move_column_right,
-
-  insert_table = insert_table,
-  insert_table_alt = insert_table_alt,
-
-  delete_current_column = delete_current_column,
-}
+return M

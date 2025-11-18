@@ -14,54 +14,56 @@ local tbl_node_len = #tbl_node
 
 local conf = require('table-nvim.config')
 
+local M = {}
+
 ---Returns `true` if the node is the root of a markdown table and `false` otherwise.
 ---@param node TSNode The node to check.
-local is_tbl_root = function(node)
+function M.is_tbl_root(node)
   return node:type() == tbl_node
 end
 
 ---Returns `true` if the node belongs to a markdown table and `false` otherwise.
 ---@param node TSNode The node to check.
-local is_tbl_node = function(node)
+function M.is_tbl_node(node)
   return string.sub(node:type(), 1, tbl_node_len) == tbl_node
 end
 
 ---@param node TSNode? A node within a markdown table
 ---@return TSNode? tbl_root Root node of a markdown table, if the `node` does not belong to a markdown table, then `nil` is returned
-local get_tbl_root = function(node)
+function M.get_tbl_root(node)
   if node == nil then return nil end
   if string.sub(node:type(), 1, tbl_node_len) ~= tbl_node then return nil end
 
-  if is_tbl_root(node) then return node end
+  if M.is_tbl_root(node) then return node end
 
   while true do
     node = node:parent()
     if node == nil then return nil end
-    if is_tbl_root(node) then return node end
+    if M.is_tbl_root(node) then return node end
   end
 end
 
 ---Returns `true` if the provided node is a table cell, and `false` otherwise.
-local is_tbl_cell = function(node)
+function M.is_tbl_cell(node)
   local type = node:type()
   return type == tbl_cell or type == tbl_delimiter_cell
 end
 
 ---Returns `true` if the provided node is a table row, and `false` otherwise.
-local is_tbl_row = function(node)
+function M.is_tbl_row(node)
   local type = node:type()
   return type == tbl_header or type == tbl_delimiter_row or type == tbl_row
 end
 
 ---Returns `true` if the provided node is an alignment node, and `false` otherwise.
-local is_tbl_align = function(node)
+function M.is_tbl_align(node)
   local type = node:type()
   return type == tbl_align_left or type == tbl_align_right
 end
 
 ---Returns rows for a new table that is not surrounded by pipes.
 ---@return string[]
-local gen_table_alt = function()
+function M.gen_table_alt()
   local padd             = conf.get_config().padd_column_separators
   local column_separator = padd and ' | ' or '|'
 
@@ -78,7 +80,7 @@ end
 
 ---Returns rows for a new table.
 ---@return string[]
-local gen_table = function()
+function M.gen_table()
   local padd            = conf.get_config().padd_column_separators
   local first_separator = padd and '| ' or '|'
   local last_separator  = padd and ' |' or '|'
@@ -98,7 +100,7 @@ end
 ---Iterate of all children of a treesitter node.
 ---@param node TSNode
 ---@return fun(): integer?, TSNode?
-local iter_children = function(node)
+function M.iter_children(node)
   local n = node:child_count()
   local i = -1
   return function()
@@ -110,7 +112,7 @@ end
 ---Iterate of all named children of a treesitter node.
 ---@param node TSNode
 ---@return fun(): integer?, TSNode?
-local iter_named_children = function(node)
+function M.iter_named_children(node)
   local n = node:named_child_count()
   local i = -1
   return function()
@@ -122,25 +124,13 @@ end
 --- Get next or previous sibling of a table node
 ---@param node TSNode
 ---@return TSNode?
-local tbl_named_sibling = function(node, next)
+function M.tbl_named_sibling(node, next)
   while true do
     ---@diagnostic disable-next-line: cast-local-type
     node = next and node:next_named_sibling() or node:prev_named_sibling()
     if not node then return end
-    if is_tbl_node(node) then return node end
+    if M.is_tbl_node(node) then return node end
   end
 end
 
-return {
-  get_tbl_root = get_tbl_root,
-  is_tbl_root = is_tbl_root,
-  is_tbl_node = is_tbl_node,
-  is_tbl_cell = is_tbl_cell,
-  is_tbl_row = is_tbl_row,
-  is_tbl_align = is_tbl_align,
-  gen_table = gen_table,
-  gen_table_alt = gen_table_alt,
-  iter_children = iter_children,
-  iter_named_children = iter_named_children,
-  tbl_named_sibling = tbl_named_sibling,
-}
+return M

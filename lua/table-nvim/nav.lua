@@ -4,11 +4,13 @@ local api = vim.api
 local utils = require('table-nvim.utils')
 local conf = require('table-nvim.config')
 
+local M = {}
+
 ---Returns next or previous named sibling.
 ---@param node TSNode The node for which to get the sibling.
 ---@param next boolean Whether to return next or previous sibling.
 ---@return TSNode?
-local get_named_sibling = function(node, next)
+local function get_named_sibling(node, next)
   if next then
     return node:next_named_sibling()
   else
@@ -22,7 +24,7 @@ end
 ---@param col number Column index of the cursor.
 ---@param next boolean Whether to get the next or previous node.
 ---@return TSNode
-local get_node = function(node, row, col, next)
+local function get_node(node, row, col, next)
   local root = utils.get_tbl_root(node)
   if not root then return node end
 
@@ -91,7 +93,7 @@ end
 
 ---Move to next or previous node.
 ---@param next boolean Whether to move to next or previous node.
-local move = function(next)
+function M.move(next)
   local pos = api.nvim_win_get_cursor(0)
   pos[1] = pos[1] - 1 -- Change to 0 based indexing.
 
@@ -106,7 +108,7 @@ local move = function(next)
   api.nvim_win_set_cursor(0, { row + 1, col })
 end
 
-local next = function()
+function M.next()
   local node = ts.get_node()
 
   if not node or not utils.is_tbl_node(node) then
@@ -116,7 +118,7 @@ local next = function()
   end
 end
 
-local prev = function()
+function M.prev()
   local node = ts.get_node()
 
   if not node or not utils.is_tbl_node(node) then
@@ -126,8 +128,4 @@ local prev = function()
   end
 end
 
-return {
-  next = next,
-  prev = prev,
-  move = move,
-}
+return M
