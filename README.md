@@ -1,14 +1,14 @@
-# A markdown table editor
+## A markdown table editor
 A simple (for now?) markdown table editor that formats the table as you type.
 
-# Demo
+## Demo
 https://github.com/user-attachments/assets/b026dc0b-4f10-48cc-81cb-3edf0f3e7772
 
-# Dependencies
+## Dependencies
 - [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
 - that's it!
 
-# Install
+## Install
 
 Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
@@ -19,7 +19,7 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 }
 ```
 
-# Default config
+## Default config
 ```lua
 {
   padd_column_separators = true,   -- Insert a space around column separators.
@@ -40,3 +40,10 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
   }
 }
 ```
+
+## FAQ
+### How do I disable the keymaps?
+Just set the respective keymap option to `false` to disable it. You can also
+set the `mappings` table to `false` to disable all keymaps. After that, you can
+set the keymaps manually as needed. Look at [this](lua/table-nvim/keymaps.lua)
+file to see how keymaps are set by default.
