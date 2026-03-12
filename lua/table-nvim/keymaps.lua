@@ -47,7 +47,7 @@ local set_keymaps = function(buf)
     map('n', maps.insert_column_left, edit.insert_column_left, opts('Insert column left'))
   end
 
-  if maps.insert_column_righ then
+  if maps.insert_column_right then
     map('n', maps.insert_column_right, edit.insert_column_right, opts('Insert column right'))
   end
 
