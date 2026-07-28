@@ -12,6 +12,7 @@ api.nvim_create_autocmd({ 'InsertLeave' }, {
   group = group_id,
   pattern = { '*.md', '*.mdx' },
   callback = function()
+	ts.get_parser(0):parse(false) -- false only parses empty ranges
     local root = utils.get_tbl_root(ts.get_node());
     if not root then return end
 
